@@ -74,7 +74,7 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
       <div>
         <h2 className="text-2xl font-bold mb-2">Módulos</h2>
         <p className="text-muted-foreground">
-          Selecciona los módulos de Payper que este tenant podrá usar
+          Selecciona los módulos de Payper que este comercio podrá usar
         </p>
       </div>
 
@@ -86,7 +86,7 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
             <Badge variant="default" className="text-xs">Core</Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Módulos principales recomendados para todos los tenants
+            Módulos principales recomendados para todos los comercios
           </p>
           <div className="grid gap-3">
             {coreModules.map((module) => (
@@ -120,7 +120,7 @@ export const ModulesStep = ({ selectedModules, setSelectedModules }: ModulesStep
         <div className="space-y-3">
           <h3 className="font-medium">Módulos Adicionales</h3>
           <p className="text-sm text-muted-foreground">
-            Funcionalidades opcionales según las necesidades del tenant
+            Funcionalidades opcionales según las necesidades del comercio
           </p>
           <div className="grid gap-3">
             {optionalModules.map((module) => (

@@ -342,7 +342,7 @@ export type Database = {
         | "support_admin"
         | "sales_admin"
         | "read_only"
-      tenant_status: "trial" | "active" | "suspended" | "cancelled"
+      tenant_status: "trial" | "active" | "suspended" | "cancelled" | "free"
       tenant_user_role:
         | "tenant_owner"
         | "tenant_admin"
@@ -483,7 +483,7 @@ export const Constants = {
         "sales_admin",
         "read_only",
       ],
-      tenant_status: ["trial", "active", "suspended", "cancelled"],
+      tenant_status: ["trial", "active", "suspended", "cancelled", "free"],
       tenant_user_role: [
         "tenant_owner",
         "tenant_admin",

@@ -170,11 +170,11 @@ const CreateTenant = () => {
         },
       });
 
-      toast.success("Tenant creado exitosamente");
+      toast.success("Comercio creado exitosamente");
       navigate(`/admin/tenants/${tenant.id}`);
     } catch (error: any) {
       console.error("Error creating tenant:", error);
-      toast.error(error.message || "Error al crear el tenant");
+      toast.error(error.message || "Error al crear el comercio");
     } finally {
       setIsSubmitting(false);
     }
@@ -189,7 +189,7 @@ const CreateTenant = () => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Crear Nuevo Tenant</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Crear Nuevo Comercio</h1>
           <p className="text-muted-foreground">
             Paso {currentStep} de {STEPS.length}: {STEPS[currentStep - 1].title}
           </p>
@@ -257,7 +257,7 @@ const CreateTenant = () => {
             ) : (
               <>
                 <Check className="h-4 w-4 mr-2" />
-                Crear Tenant
+                Crear Comercio
               </>
             )}
           </Button>

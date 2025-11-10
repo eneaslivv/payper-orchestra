@@ -28,7 +28,7 @@ export const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold mb-2">Datos Básicos</h2>
-        <p className="text-muted-foreground">Información principal del tenant</p>
+        <p className="text-muted-foreground">Información principal del comercio</p>
       </div>
 
       <div className="space-y-4">
@@ -107,6 +107,7 @@ export const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
               <SelectContent>
                 <SelectItem value="trial">Trial</SelectItem>
                 <SelectItem value="active">Activo</SelectItem>
+                <SelectItem value="free">Free</SelectItem>
                 <SelectItem value="suspended">Suspendido</SelectItem>
               </SelectContent>
             </Select>

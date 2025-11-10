@@ -119,7 +119,7 @@ const Dashboard = () => {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Tenants</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Comercios</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -160,13 +160,13 @@ const Dashboard = () => {
 
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Tenants Recientes</CardTitle>
+          <CardTitle>Comercios Recientes</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {recentTenants.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                No hay tenants registrados aún
+                No hay comercios registrados aún
               </p>
             ) : (
               recentTenants.map((tenant) => (
