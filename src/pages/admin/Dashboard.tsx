@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Users, Package, TrendingUp } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ModuleChip } from "@/components/ModuleChip";
-import { format } from "date-fns";
+import { format, subDays, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface DashboardStats {
   totalTenants: number;
@@ -24,6 +25,11 @@ interface RecentTenant {
   contacts: { name: string; email: string }[];
 }
 
+interface UserGrowthData {
+  date: string;
+  usuarios: number;
+}
+
 const Dashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalTenants: 0,
@@ -33,6 +39,7 @@ const Dashboard = () => {
     suspendedTenants: 0,
   });
   const [recentTenants, setRecentTenants] = useState<RecentTenant[]>([]);
+  const [userGrowth, setUserGrowth] = useState<UserGrowthData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -92,6 +99,36 @@ const Dashboard = () => {
       })) || [];
 
       setRecentTenants(formatted);
+
+      // Fetch user growth data (last 30 days)
+      const thirtyDaysAgo = startOfDay(subDays(new Date(), 30));
+      const { data: usersData, error: usersError } = await supabase
+        .from("tenant_users")
+        .select("created_at")
+        .gte("created_at", thirtyDaysAgo.toISOString())
+        .order("created_at", { ascending: true });
+
+      if (usersError) throw usersError;
+
+      // Group by date
+      const growthMap = new Map<string, number>();
+      usersData?.forEach((user) => {
+        const dateKey = format(new Date(user.created_at), "dd MMM", { locale: es });
+        growthMap.set(dateKey, (growthMap.get(dateKey) || 0) + 1);
+      });
+
+      // Convert to array and fill missing dates
+      const growthArray: UserGrowthData[] = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = subDays(new Date(), i);
+        const dateKey = format(date, "dd MMM", { locale: es });
+        growthArray.push({
+          date: dateKey,
+          usuarios: growthMap.get(dateKey) || 0,
+        });
+      }
+
+      setUserGrowth(growthArray);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -178,6 +215,49 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="border-border/40 shadow-none">
+        <CardHeader>
+          <CardTitle className="text-base font-medium">Crecimiento de Usuarios</CardTitle>
+          <p className="text-xs text-muted-foreground">Registros en los últimos 30 días</p>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={userGrowth} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                  tickLine={{ stroke: "hsl(var(--border))" }}
+                />
+                <YAxis
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                  tickLine={{ stroke: "hsl(var(--border))" }}
+                  allowDecimals={false}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "6px",
+                    fontSize: "12px",
+                  }}
+                  labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 500 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="usuarios"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--primary))", r: 3 }}
+                  activeDot={{ r: 5 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="border-border/40 shadow-none">
         <CardHeader>
