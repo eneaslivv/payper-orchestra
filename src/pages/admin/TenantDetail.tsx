@@ -4,12 +4,35 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Building2, Mail, MapPin, Package, Users, Phone } from "lucide-react";
+import { ArrowLeft, Building2, Mail, MapPin, Package, Users, Phone, Edit, Pause, Play, Trash2 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ModuleChip } from "@/components/ModuleChip";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { TenantUsers } from "@/components/tenant-detail/TenantUsers";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface TenantDetail {
   id: string;
@@ -53,8 +76,19 @@ interface TenantDetail {
 const TenantDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [tenant, setTenant] = useState<TenantDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    legal_name: "",
+    default_currency: "",
+    timezone: "",
+    notes_internal: "",
+  });
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -115,6 +149,139 @@ const TenantDetail = () => {
     }
   };
 
+  const handleToggleStatus = async () => {
+    if (!tenant) return;
+    
+    setActionLoading(true);
+    try {
+      const newStatus = tenant.status === "suspended" ? "active" : "suspended";
+      const beforeData = { status: tenant.status };
+      
+      const { error } = await supabase
+        .from("tenants")
+        .update({ status: newStatus })
+        .eq("id", tenant.id);
+
+      if (error) throw error;
+
+      // Log the action
+      await supabase.rpc("insert_audit_log", {
+        p_action: newStatus === "suspended" ? "TENANT_SUSPENDED" : "TENANT_ACTIVATED",
+        p_entity_type: "tenant",
+        p_entity_id: tenant.id,
+        p_before_data: beforeData,
+        p_after_data: { status: newStatus },
+      });
+
+      toast.success(
+        newStatus === "suspended" 
+          ? "Comercio pausado exitosamente" 
+          : "Comercio activado exitosamente"
+      );
+      fetchTenantDetail();
+    } catch (error: any) {
+      console.error("Error toggling tenant status:", error);
+      toast.error("Error al cambiar el estado del comercio");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!tenant) return;
+    
+    setActionLoading(true);
+    try {
+      const beforeData = {
+        name: tenant.name,
+        slug: tenant.slug,
+        status: tenant.status,
+      };
+
+      const { error } = await supabase
+        .from("tenants")
+        .delete()
+        .eq("id", tenant.id);
+
+      if (error) throw error;
+
+      // Log the action
+      await supabase.rpc("insert_audit_log", {
+        p_action: "TENANT_DELETED",
+        p_entity_type: "tenant",
+        p_entity_id: tenant.id,
+        p_before_data: beforeData,
+      });
+
+      toast.success("Comercio eliminado exitosamente");
+      navigate("/admin/tenants");
+    } catch (error: any) {
+      console.error("Error deleting tenant:", error);
+      toast.error("Error al eliminar el comercio");
+    } finally {
+      setActionLoading(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
+  const openEditDialog = () => {
+    if (!tenant) return;
+    setEditForm({
+      name: tenant.name,
+      legal_name: tenant.legal_name || "",
+      default_currency: tenant.default_currency,
+      timezone: tenant.timezone,
+      notes_internal: tenant.notes_internal || "",
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleEdit = async () => {
+    if (!tenant) return;
+    
+    setActionLoading(true);
+    try {
+      const beforeData = {
+        name: tenant.name,
+        legal_name: tenant.legal_name,
+        default_currency: tenant.default_currency,
+        timezone: tenant.timezone,
+        notes_internal: tenant.notes_internal,
+      };
+
+      const { error } = await supabase
+        .from("tenants")
+        .update({
+          name: editForm.name,
+          legal_name: editForm.legal_name || null,
+          default_currency: editForm.default_currency,
+          timezone: editForm.timezone,
+          notes_internal: editForm.notes_internal || null,
+        })
+        .eq("id", tenant.id);
+
+      if (error) throw error;
+
+      // Log the action
+      await supabase.rpc("insert_audit_log", {
+        p_action: "TENANT_UPDATED",
+        p_entity_type: "tenant",
+        p_entity_id: tenant.id,
+        p_before_data: beforeData,
+        p_after_data: editForm,
+      });
+
+      toast.success("Comercio actualizado exitosamente");
+      setShowEditDialog(false);
+      fetchTenantDetail();
+    } catch (error: any) {
+      console.error("Error updating tenant:", error);
+      toast.error("Error al actualizar el comercio");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[500px]">
@@ -154,6 +321,45 @@ const TenantDetail = () => {
               {tenant.slug} • Creado {format(new Date(tenant.created_at), "d 'de' MMMM 'de' yyyy", { locale: es })}
             </p>
           </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={openEditDialog}
+            disabled={actionLoading}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleToggleStatus}
+            disabled={actionLoading}
+          >
+            {tenant.status === "suspended" ? (
+              <>
+                <Play className="h-4 w-4 mr-2" />
+                Activar
+              </>
+            ) : (
+              <>
+                <Pause className="h-4 w-4 mr-2" />
+                Pausar
+              </>
+            )}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setShowDeleteDialog(true)}
+            disabled={actionLoading}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Eliminar
+          </Button>
         </div>
       </div>
 
@@ -414,6 +620,105 @@ const TenantDetail = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. Se eliminará permanentemente el comercio{" "}
+              <strong>{tenant.name}</strong> y todos sus datos asociados (contactos, módulos, locaciones, usuarios).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={actionLoading}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={actionLoading}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {actionLoading ? "Eliminando..." : "Eliminar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Editar Comercio</DialogTitle>
+            <DialogDescription>
+              Modifica la información del comercio {tenant.name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-name">Nombre Comercial *</Label>
+              <Input
+                id="edit-name"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="Ej: Mi Negocio SA"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="edit-legal-name">Razón Social</Label>
+              <Input
+                id="edit-legal-name"
+                value={editForm.legal_name}
+                onChange={(e) => setEditForm({ ...editForm, legal_name: e.target.value })}
+                placeholder="Ej: Mi Negocio Sociedad Anónima"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="edit-currency">Moneda *</Label>
+                <Input
+                  id="edit-currency"
+                  value={editForm.default_currency}
+                  onChange={(e) => setEditForm({ ...editForm, default_currency: e.target.value })}
+                  placeholder="ARS"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="edit-timezone">Zona Horaria *</Label>
+                <Input
+                  id="edit-timezone"
+                  value={editForm.timezone}
+                  onChange={(e) => setEditForm({ ...editForm, timezone: e.target.value })}
+                  placeholder="America/Argentina/Buenos_Aires"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="edit-notes">Notas Internas</Label>
+              <Textarea
+                id="edit-notes"
+                value={editForm.notes_internal}
+                onChange={(e) => setEditForm({ ...editForm, notes_internal: e.target.value })}
+                placeholder="Notas para uso interno..."
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)} disabled={actionLoading}>
+              Cancelar
+            </Button>
+            <Button onClick={handleEdit} disabled={actionLoading || !editForm.name}>
+              {actionLoading ? "Guardando..." : "Guardar Cambios"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
