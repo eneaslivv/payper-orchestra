@@ -335,6 +335,8 @@ export type Database = {
     }
     Functions: {
       current_global_role: { Args: never; Returns: string }
+      is_global_admin: { Args: never; Returns: boolean }
+      user_tenant_ids: { Args: never; Returns: string[] }
     }
     Enums: {
       global_admin_role:
