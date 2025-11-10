@@ -10,6 +10,7 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Tenants from "./pages/admin/Tenants";
 import TenantDetail from "./pages/admin/TenantDetail";
+import CreateTenant from "./pages/admin/CreateTenant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             >
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="tenants" element={<Tenants />} />
+              <Route path="tenants/new" element={<CreateTenant />} />
               <Route path="tenants/:id" element={<TenantDetail />} />
               <Route path="users" element={<div className="p-6">Usuarios (próximamente)</div>} />
               <Route path="audit" element={<div className="p-6">Auditoría (próximamente)</div>} />
