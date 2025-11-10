@@ -334,10 +334,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      current_global_role: {
-        Args: never
-        Returns: Database["public"]["Enums"]["global_admin_role"]
-      }
+      current_global_role: { Args: never; Returns: string }
     }
     Enums: {
       global_admin_role:
