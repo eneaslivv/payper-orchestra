@@ -34,40 +34,57 @@ export function AppSidebar() {
   const location = useLocation();
   const { signOut, globalAdmin } = useAuth();
   const currentPath = location.pathname;
-  const isCollapsed = state === "collapsed";
+  const collapsed = state === "collapsed";
 
-  const isActive = (path: string) => currentPath === path || currentPath.startsWith(path + '/');
+  const isActive = (path: string) => {
+    return currentPath === path || currentPath.startsWith(path + '/');
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'super_admin': return 'Super Admin';
+      case 'support_admin': return 'Soporte';
+      case 'sales_admin': return 'Ventas';
+      case 'read_only': return 'Lectura';
+      default: return role;
+    }
+  };
 
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 py-4">
-            {!isCollapsed && (
+            {!collapsed && (
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
                 <span className="text-lg font-bold">Payper Admin</span>
               </div>
             )}
+            {collapsed && (
+              <Shield className="h-5 w-5 text-primary mx-auto" />
+            )}
           </SidebarGroupLabel>
           
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className="hover:bg-sidebar-accent"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                      <NavLink 
+                        to={item.url} 
+                        className="hover:bg-sidebar-accent"
+                        activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      >
+                        <Icon className="h-4 w-4" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -76,24 +93,22 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border">
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="px-4 py-3">
-              {!isCollapsed && (
-                <div className="mb-2">
-                  <p className="text-xs font-medium">Rol</p>
+            <div className="px-4 py-3 space-y-3">
+              {!collapsed && globalAdmin && (
+                <div>
+                  <p className="text-xs font-medium text-sidebar-foreground">Rol</p>
                   <p className="text-xs text-muted-foreground">
-                    {globalAdmin?.role === 'super_admin' && 'Super Admin'}
-                    {globalAdmin?.role === 'support_admin' && 'Soporte'}
-                    {globalAdmin?.role === 'sales_admin' && 'Ventas'}
-                    {globalAdmin?.role === 'read_only' && 'Lectura'}
+                    {getRoleLabel(globalAdmin.role)}
                   </p>
                 </div>
               )}
               <button
                 onClick={signOut}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-sidebar-accent"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-sidebar-accent transition-colors"
+                title={collapsed ? "Cerrar sesión" : undefined}
               >
                 <LogOut className="h-4 w-4" />
-                {!isCollapsed && <span>Cerrar sesión</span>}
+                {!collapsed && <span>Cerrar sesión</span>}
               </button>
             </div>
           </SidebarMenuItem>

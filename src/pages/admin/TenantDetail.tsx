@@ -64,10 +64,10 @@ const TenantDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Cargando...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-sm text-muted-foreground">Cargando detalles del tenant...</p>
         </div>
       </div>
     );
@@ -76,8 +76,14 @@ const TenantDetail = () => {
   if (!tenant) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Tenant no encontrado</p>
-        <Button onClick={() => navigate("/admin/tenants")} className="mt-4">
+        <div className="rounded-full bg-muted p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <span className="text-2xl">❌</span>
+        </div>
+        <h2 className="text-xl font-semibold mb-2">Tenant no encontrado</h2>
+        <p className="text-muted-foreground mb-4">
+          El tenant que buscas no existe o fue eliminado.
+        </p>
+        <Button onClick={() => navigate("/admin/tenants")}>
           Volver a Tenants
         </Button>
       </div>

@@ -77,10 +77,10 @@ const Tenants = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Cargando tenants...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-sm text-muted-foreground">Cargando lista de tenants...</p>
         </div>
       </div>
     );
@@ -88,12 +88,12 @@ const Tenants = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Tenants</h1>
           <p className="text-muted-foreground">Gestiona todos los clientes de Payper</p>
         </div>
-        <Button onClick={() => navigate("/admin/tenants/new")}>
+        <Button onClick={() => navigate("/admin/tenants/new")} className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Tenant
         </Button>
@@ -126,11 +126,11 @@ const Tenants = () => {
                 <div
                   key={tenant.id}
                   onClick={() => navigate(`/admin/tenants/${tenant.id}`)}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer gap-3"
                 >
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{tenant.name}</h3>
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-semibold truncate">{tenant.name}</h3>
                       <StatusBadge status={tenant.status as any} />
                     </div>
                     <div className="flex gap-1 flex-wrap">
@@ -144,7 +144,7 @@ const Tenants = () => {
                       )}
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground ml-4">
+                  <div className="text-sm text-muted-foreground sm:ml-4 shrink-0">
                     {format(new Date(tenant.created_at), "d MMM yyyy", { locale: es })}
                   </div>
                 </div>

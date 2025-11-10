@@ -98,10 +98,10 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Cargando datos...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-sm text-muted-foreground">Cargando datos del dashboard...</p>
         </div>
       </div>
     );
@@ -109,12 +109,14 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Vista general del sistema Payper</p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Vista general del sistema Payper</p>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Tenants</CardTitle>
@@ -170,15 +172,16 @@ const Dashboard = () => {
               recentTenants.map((tenant) => (
                 <div
                   key={tenant.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer gap-3"
+                  onClick={() => window.location.href = `/admin/tenants/${tenant.id}`}
                 >
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{tenant.name}</h3>
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-semibold truncate">{tenant.name}</h3>
                       <StatusBadge status={tenant.status as any} />
                     </div>
                     {tenant.contacts[0] && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground truncate">
                         {tenant.contacts[0].name} • {tenant.contacts[0].email}
                       </p>
                     )}
@@ -193,7 +196,7 @@ const Dashboard = () => {
                       )}
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground ml-4">
+                  <div className="text-sm text-muted-foreground sm:ml-4 shrink-0">
                     {format(new Date(tenant.created_at), "d MMM yyyy", { locale: es })}
                   </div>
                 </div>
