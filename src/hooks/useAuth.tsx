@@ -29,24 +29,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Fetch global admin role separately
+  const fetchGlobalAdmin = async (userId: string) => {
+    const { data } = await supabase
+      .from("global_admins")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+    
+    setGlobalAdmin(data);
+    return data;
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
+        // Defer database calls to avoid blocking
         if (session?.user) {
-          // Fetch global admin role
-          setTimeout(async () => {
-            const { data } = await supabase
-              .from("global_admins")
-              .select("*")
-              .eq("user_id", session.user.id)
-              .eq("is_active", true)
-              .maybeSingle();
-            
-            setGlobalAdmin(data);
+          setTimeout(() => {
+            fetchGlobalAdmin(session.user.id);
           }, 0);
         } else {
           setGlobalAdmin(null);
@@ -60,16 +66,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        supabase
-          .from("global_admins")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .eq("is_active", true)
-          .maybeSingle()
-          .then(({ data }) => {
-            setGlobalAdmin(data);
-            setLoading(false);
-          });
+        fetchGlobalAdmin(session.user.id).then(() => {
+          setLoading(false);
+        });
       } else {
         setLoading(false);
       }
