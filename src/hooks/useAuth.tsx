@@ -31,18 +31,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Fetch global admin role separately
   const fetchGlobalAdmin = async (userId: string) => {
+    // Prefer calling the SECURITY DEFINER function to avoid any RLS pitfalls
+    const { data: role, error: roleError } = await supabase.rpc('current_global_role');
+
+    if (roleError) {
+      console.error('Error calling current_global_role():', roleError);
+    }
+
+    if (role) {
+      // Synthesize a minimal GlobalAdmin object
+      const ga: GlobalAdmin = {
+        id: 'by-function',
+        user_id: userId,
+        role: role as GlobalAdmin['role'],
+        is_active: true,
+      };
+      setGlobalAdmin(ga);
+      return ga;
+    }
+
+    // Fallback: direct select (should work, but keep as backup)
     const { data, error } = await supabase
-      .from("global_admins")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("is_active", true)
+      .from('global_admins')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
       .maybeSingle();
 
     if (error) {
       // Helpful for debugging RLS/permissions issues
-      console.error("Error fetching global_admins:", error);
+      console.error('Error fetching global_admins:', error);
     }
-    
+
     setGlobalAdmin(data);
     return data;
   };
