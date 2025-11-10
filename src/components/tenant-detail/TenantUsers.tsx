@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, UserCheck, UserX } from "lucide-react";
+import { Plus, Trash2, Pencil, Pause, Play } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -44,6 +44,8 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<string>("tenant_user");
   const [inviting, setInviting] = useState(false);
+  const [editingUser, setEditingUser] = useState<TenantUser | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -104,7 +106,7 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
   };
 
   const handleRemoveUser = async (userId: string) => {
-    if (!confirm("¿Estás seguro de querer remover este usuario?")) return;
+    if (!confirm("¿Estás seguro de querer eliminar este usuario?")) return;
 
     try {
       const { error } = await supabase
@@ -114,11 +116,56 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
       if (error) throw error;
 
-      toast.success("Usuario removido");
+      toast.success("Usuario eliminado");
       fetchUsers();
     } catch (error: any) {
       console.error("Error removing user:", error);
-      toast.error("Error al remover usuario");
+      toast.error("Error al eliminar usuario");
+    }
+  };
+
+  const handleToggleStatus = async (user: TenantUser) => {
+    const newStatus = user.status === "active" ? "disabled" : "active";
+    
+    try {
+      const { error } = await supabase
+        .from("tenant_users")
+        .update({ status: newStatus as any })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast.success(newStatus === "active" ? "Usuario activado" : "Usuario pausado");
+      fetchUsers();
+    } catch (error: any) {
+      console.error("Error toggling user status:", error);
+      toast.error("Error al cambiar estado del usuario");
+    }
+  };
+
+  const handleEditUser = (user: TenantUser) => {
+    setEditingUser(user);
+    setShowEditDialog(true);
+  };
+
+  const handleUpdateUser = async () => {
+    if (!editingUser) return;
+
+    try {
+      const { error } = await supabase
+        .from("tenant_users")
+        .update({ role: editingUser.role as any })
+        .eq("id", editingUser.id);
+
+      if (error) throw error;
+
+      toast.success("Usuario actualizado");
+      setShowEditDialog(false);
+      setEditingUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      console.error("Error updating user:", error);
+      toast.error("Error al actualizar usuario");
     }
   };
 
@@ -148,11 +195,11 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="py-12">
+      <Card className="border-border/40 shadow-none">
+        <CardContent className="py-16">
           <div className="text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-            <p className="text-sm text-muted-foreground">Cargando usuarios...</p>
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto mb-3"></div>
+            <p className="text-xs text-muted-foreground">Cargando usuarios...</p>
           </div>
         </CardContent>
       </Card>
@@ -161,47 +208,69 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Usuarios del Comercio</CardTitle>
-          <Button onClick={() => setShowInviteDialog(true)} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Invitar Usuario
+      <Card className="border-border/40 shadow-none">
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <CardTitle className="text-base font-medium">Usuarios del Comercio</CardTitle>
+          <Button onClick={() => setShowInviteDialog(true)} size="sm" className="h-8 text-xs">
+            <Plus className="h-3.5 w-3.5 mr-1.5" />
+            Agregar Usuario
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {users.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                No hay usuarios asignados a este comercio
+              <p className="text-center text-muted-foreground/70 py-12 text-sm">
+                No hay usuarios asignados
               </p>
             ) : (
               users.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  className="flex items-center justify-between px-4 py-3 border border-border/40 rounded-md hover:border-border transition-colors"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium">{user.email || user.user_id.substring(0, 8) + "..."}</p>
+                      <p className="font-medium text-sm">{user.email || user.user_id.substring(0, 8) + "..."}</p>
                       {getStatusBadge(user.status)}
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span>{getRoleLabel(user.role)}</span>
                       <span>•</span>
                       <span>
-                        Agregado {format(new Date(user.created_at), "d MMM yyyy", { locale: es })}
+                        {format(new Date(user.created_at), "d MMM yyyy", { locale: es })}
                       </span>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemoveUser(user.id)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleEditUser(user)}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleToggleStatus(user)}
+                    >
+                      {user.status === "active" ? (
+                        <Pause className="h-3.5 w-3.5" />
+                      ) : (
+                        <Play className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => handleRemoveUser(user.id)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
               ))
             )}
@@ -211,30 +280,31 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
 
       {/* Invite Dialog */}
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Invitar Usuario</DialogTitle>
-            <DialogDescription>
-              Invita a un nuevo usuario a este comercio. Si no tiene cuenta, se creará automáticamente.
+            <DialogTitle className="text-base">Agregar Usuario</DialogTitle>
+            <DialogDescription className="text-xs">
+              Invita a un nuevo usuario a este comercio.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
+          <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-xs">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="usuario@ejemplo.com"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
+                className="h-9"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Rol</Label>
+              <Label htmlFor="role" className="text-xs">Rol</Label>
               <Select value={inviteRole} onValueChange={setInviteRole}>
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -248,11 +318,63 @@ export const TenantUsers = ({ tenantId }: TenantUsersProps) => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+            <Button variant="outline" onClick={() => setShowInviteDialog(false)} className="h-9 text-xs">
               Cancelar
             </Button>
-            <Button onClick={handleInviteUser} disabled={inviting}>
-              {inviting ? "Invitando..." : "Invitar"}
+            <Button onClick={handleInviteUser} disabled={inviting} className="h-9 text-xs">
+              {inviting ? "Agregando..." : "Agregar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base">Editar Usuario</DialogTitle>
+            <DialogDescription className="text-xs">
+              Modifica el rol del usuario.
+            </DialogDescription>
+          </DialogHeader>
+
+          {editingUser && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label className="text-xs">Email</Label>
+                <Input
+                  value={editingUser.email || editingUser.user_id.substring(0, 8) + "..."}
+                  disabled
+                  className="h-9 bg-muted"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-role" className="text-xs">Rol</Label>
+                <Select
+                  value={editingUser.role}
+                  onValueChange={(value) => setEditingUser({ ...editingUser, role: value })}
+                >
+                  <SelectTrigger className="h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="tenant_owner">Propietario</SelectItem>
+                    <SelectItem value="tenant_admin">Administrador</SelectItem>
+                    <SelectItem value="tenant_manager">Manager</SelectItem>
+                    <SelectItem value="tenant_user">Usuario</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)} className="h-9 text-xs">
+              Cancelar
+            </Button>
+            <Button onClick={handleUpdateUser} className="h-9 text-xs">
+              Guardar Cambios
             </Button>
           </DialogFooter>
         </DialogContent>

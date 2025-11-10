@@ -11,6 +11,7 @@ interface DashboardStats {
   totalTenants: number;
   activeTenants: number;
   trialTenants: number;
+  freeTenants: number;
   suspendedTenants: number;
 }
 
@@ -28,6 +29,7 @@ const Dashboard = () => {
     totalTenants: 0,
     activeTenants: 0,
     trialTenants: 0,
+    freeTenants: 0,
     suspendedTenants: 0,
   });
   const [recentTenants, setRecentTenants] = useState<RecentTenant[]>([]);
@@ -50,6 +52,7 @@ const Dashboard = () => {
         totalTenants: tenants?.length || 0,
         activeTenants: tenants?.filter((t) => t.status === "active").length || 0,
         trialTenants: tenants?.filter((t) => t.status === "trial").length || 0,
+        freeTenants: tenants?.filter((t) => t.status === "free").length || 0,
         suspendedTenants: tenants?.filter((t) => t.status === "suspended").length || 0,
       };
       setStats(stats);
@@ -108,80 +111,98 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Vista general del sistema Payper</p>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-1">Vista general del sistema</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Comercios</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Card className="border-border/40 shadow-none">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total</CardTitle>
+              <Building2 className="h-4 w-4 text-muted-foreground/60" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalTenants}</div>
+          <CardContent className="pt-0">
+            <div className="text-3xl font-semibold">{stats.totalTenants}</div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Activos</CardTitle>
-            <TrendingUp className="h-4 w-4 text-success" />
+        <Card className="border-border/40 shadow-none">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Activos</CardTitle>
+              <TrendingUp className="h-4 w-4 text-success/60" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-success">{stats.activeTenants}</div>
+          <CardContent className="pt-0">
+            <div className="text-3xl font-semibold text-success">{stats.activeTenants}</div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En Trial</CardTitle>
-            <Package className="h-4 w-4 text-warning" />
+        <Card className="border-border/40 shadow-none">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Trial</CardTitle>
+              <Package className="h-4 w-4 text-warning/60" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-warning">{stats.trialTenants}</div>
+          <CardContent className="pt-0">
+            <div className="text-3xl font-semibold text-warning">{stats.trialTenants}</div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Suspendidos</CardTitle>
-            <Users className="h-4 w-4 text-destructive" />
+        <Card className="border-border/40 shadow-none">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Free</CardTitle>
+              <Users className="h-4 w-4 text-primary/60" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">{stats.suspendedTenants}</div>
+          <CardContent className="pt-0">
+            <div className="text-3xl font-semibold text-primary">{stats.freeTenants}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/40 shadow-none">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Suspendidos</CardTitle>
+              <Users className="h-4 w-4 text-destructive/60" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-3xl font-semibold text-destructive">{stats.suspendedTenants}</div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="shadow-sm">
+      <Card className="border-border/40 shadow-none">
         <CardHeader>
-          <CardTitle>Comercios Recientes</CardTitle>
+          <CardTitle className="text-base font-medium">Comercios Recientes</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {recentTenants.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
+              <p className="text-center text-muted-foreground/70 py-12 text-sm">
                 No hay comercios registrados aún
               </p>
             ) : (
               recentTenants.map((tenant) => (
                 <div
                   key={tenant.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 border border-border/40 rounded-md hover:border-border hover:bg-accent/30 transition-all cursor-pointer gap-3"
                   onClick={() => window.location.href = `/admin/tenants/${tenant.id}`}
                 >
-                  <div className="space-y-1 flex-1 min-w-0">
+                  <div className="space-y-1.5 flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold truncate">{tenant.name}</h3>
+                      <h3 className="font-medium text-sm truncate">{tenant.name}</h3>
                       <StatusBadge status={tenant.status as any} />
                     </div>
                     {tenant.contacts[0] && (
-                      <p className="text-sm text-muted-foreground truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {tenant.contacts[0].name} • {tenant.contacts[0].email}
                       </p>
                     )}
@@ -190,13 +211,13 @@ const Dashboard = () => {
                         <ModuleChip key={idx} name={module.name} isCore={module.is_core} />
                       ))}
                       {tenant.modules.length > 3 && (
-                        <span className="text-xs text-muted-foreground self-center">
+                        <span className="text-xs text-muted-foreground/60 self-center">
                           +{tenant.modules.length - 3} más
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground sm:ml-4 shrink-0">
+                  <div className="text-xs text-muted-foreground sm:ml-4 shrink-0">
                     {format(new Date(tenant.created_at), "d MMM yyyy", { locale: es })}
                   </div>
                 </div>
