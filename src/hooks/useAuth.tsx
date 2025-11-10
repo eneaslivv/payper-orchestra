@@ -31,12 +31,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Fetch global admin role separately
   const fetchGlobalAdmin = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("global_admins")
       .select("*")
       .eq("user_id", userId)
       .eq("is_active", true)
       .maybeSingle();
+
+    if (error) {
+      // Helpful for debugging RLS/permissions issues
+      console.error("Error fetching global_admins:", error);
+    }
     
     setGlobalAdmin(data);
     return data;
@@ -51,11 +56,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Defer database calls to avoid blocking
         if (session?.user) {
+          setLoading(true);
           setTimeout(() => {
-            fetchGlobalAdmin(session.user.id);
+            fetchGlobalAdmin(session.user!.id).finally(() => setLoading(false));
           }, 0);
         } else {
           setGlobalAdmin(null);
+          setLoading(false);
         }
       }
     );

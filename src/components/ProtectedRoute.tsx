@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, globalAdmin, loading } = useAuth();
+  const { user, globalAdmin, loading, signOut } = useAuth();
 
   if (loading) {
     return (
@@ -29,7 +29,13 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
             Contacta al equipo de Payper para obtener acceso.
           </p>
           <button
-            onClick={() => window.location.href = "/auth"}
+            onClick={async () => {
+              try {
+                await signOut();
+              } catch (e) {
+                // no-op
+              }
+            }}
             className="text-primary hover:underline"
           >
             Volver a iniciar sesión
