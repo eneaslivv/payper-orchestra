@@ -154,14 +154,12 @@ const CreateTenant = () => {
         }
       }
 
-      // 6. Create audit log
-      await supabase.from("audit_logs").insert({
-        actor_user_id: user?.id,
-        actor_role: globalAdmin?.role,
-        action: "TENANT_CREATED",
-        entity_type: "tenant",
-        entity_id: tenant.id,
-        after_data: {
+      // 6. Create audit log using secure function
+      await supabase.rpc("insert_audit_log", {
+        p_action: "TENANT_CREATED",
+        p_entity_type: "tenant",
+        p_entity_id: tenant.id,
+        p_after_data: {
           name: tenant.name,
           slug: tenant.slug,
           status: tenant.status,

@@ -335,6 +335,16 @@ export type Database = {
     }
     Functions: {
       current_global_role: { Args: never; Returns: string }
+      insert_audit_log: {
+        Args: {
+          p_action: string
+          p_after_data?: Json
+          p_before_data?: Json
+          p_entity_id: string
+          p_entity_type: string
+        }
+        Returns: string
+      }
       is_global_admin: { Args: never; Returns: boolean }
       is_member_of_tenant: { Args: { _tenant_id: string }; Returns: boolean }
       is_tenant_admin: { Args: { _tenant_id: string }; Returns: boolean }
