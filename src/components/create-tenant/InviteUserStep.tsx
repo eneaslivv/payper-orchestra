@@ -11,11 +11,11 @@ interface InviteUserStepProps {
 }
 
 const roleLabels = {
-  tenant_owner: "Owner - Acceso total",
-  tenant_admin: "Admin - Gestión completa",
-  tenant_ops: "Operaciones - Uso diario",
-  tenant_finance: "Finanzas - Reportes y datos",
-  tenant_viewer: "Visualización - Solo lectura",
+  tenant_owner: "Owner - Full access",
+  tenant_admin: "Admin - Complete management",
+  tenant_ops: "Operations - Daily usage",
+  tenant_finance: "Finance - Reports and data",
+  tenant_viewer: "Viewer - Read only",
 };
 
 export const InviteUserStep = ({ inviteData, setInviteData }: InviteUserStepProps) => {
@@ -33,9 +33,9 @@ export const InviteUserStep = ({ inviteData, setInviteData }: InviteUserStepProp
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Invitar Usuario (Opcional)</h2>
+        <h2 className="text-2xl font-bold mb-2">Invite User (Optional)</h2>
         <p className="text-muted-foreground">
-          Invita al usuario que gestionará este tenant. Podrás agregar más usuarios después.
+          Invite the user who will manage this tenant. You can add more users later.
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export const InviteUserStep = ({ inviteData, setInviteData }: InviteUserStepProp
           onCheckedChange={handleSkipChange}
         />
         <Label htmlFor="skip_invite" className="text-sm font-normal cursor-pointer">
-          Omitir este paso (agregar usuarios más tarde)
+          Skip this step (add users later)
         </Label>
       </div>
 
@@ -54,7 +54,7 @@ export const InviteUserStep = ({ inviteData, setInviteData }: InviteUserStepProp
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="invite_email">
-              Email del Usuario <span className="text-destructive">*</span>
+              User Email <span className="text-destructive">*</span>
             </Label>
             <Input
               id="invite_email"
@@ -63,15 +63,15 @@ export const InviteUserStep = ({ inviteData, setInviteData }: InviteUserStepProp
               onChange={(e) =>
                 setInviteData({ ...inviteData, email: e.target.value })
               }
-              placeholder="admin@empresa.com"
+              placeholder="admin@company.com"
             />
             <p className="text-xs text-muted-foreground">
-              Se enviará un email de invitación a esta dirección
+              An invitation email will be sent to this address
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="invite_role">Rol del Usuario</Label>
+            <Label htmlFor="invite_role">User Role</Label>
             <Select
               value={inviteData?.role || "tenant_owner"}
               onValueChange={(value: any) =>
@@ -92,13 +92,13 @@ export const InviteUserStep = ({ inviteData, setInviteData }: InviteUserStepProp
           </div>
 
           <div className="bg-accent/50 p-4 rounded-lg space-y-2">
-            <p className="text-sm font-medium">Permisos según el rol:</p>
+            <p className="text-sm font-medium">Permissions by role:</p>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• <strong>Owner:</strong> Control total del tenant</li>
-              <li>• <strong>Admin:</strong> Gestión de usuarios y configuraciones</li>
-              <li>• <strong>Operaciones:</strong> Uso diario de los módulos activos</li>
-              <li>• <strong>Finanzas:</strong> Acceso a reportes y datos financieros</li>
-              <li>• <strong>Viewer:</strong> Solo visualización de información</li>
+              <li>• <strong>Owner:</strong> Complete tenant control</li>
+              <li>• <strong>Admin:</strong> User and configuration management</li>
+              <li>• <strong>Operations:</strong> Daily use of active modules</li>
+              <li>• <strong>Finance:</strong> Access to reports and financial data</li>
+              <li>• <strong>Viewer:</strong> View information only</li>
             </ul>
           </div>
         </div>

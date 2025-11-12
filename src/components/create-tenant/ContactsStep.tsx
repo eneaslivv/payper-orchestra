@@ -31,10 +31,10 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
     const newErrors: Record<string, string> = {};
 
     if (!contact.name || contact.name.length < 2) {
-      newErrors.name = "El nombre debe tener al menos 2 caracteres";
+      newErrors.name = "Name must be at least 2 characters";
     }
     if (!contact.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)) {
-      newErrors.email = "Email inválido";
+      newErrors.email = "Invalid email";
     }
 
     setErrors(newErrors);
@@ -53,7 +53,7 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
       is_primary: newContact.is_primary || false,
     };
 
-    // Si este es primary, quitar primary de otros
+    // If this is primary, remove primary from others
     const updatedContacts = newContact.is_primary
       ? contacts.map((c) => ({ ...c, is_primary: false }))
       : contacts;
@@ -85,16 +85,16 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Contactos</h2>
+        <h2 className="text-2xl font-bold mb-2">Contacts</h2>
         <p className="text-muted-foreground">
-          Agrega personas de contacto del tenant. Al menos un contacto es recomendado.
+          Add tenant contact persons. At least one contact is recommended.
         </p>
       </div>
 
-      {/* Lista de contactos agregados */}
+      {/* Added contacts list */}
       {contacts.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-medium">Contactos agregados ({contacts.length})</h3>
+          <h3 className="font-medium">Added Contacts ({contacts.length})</h3>
           {contacts.map((contact) => (
             <Card key={contact.id} className="p-4">
               <div className="flex items-start justify-between">
@@ -107,7 +107,7 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
                       <p className="font-medium">{contact.name}</p>
                       {contact.is_primary && (
                         <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
-                          Principal
+                          Primary
                         </span>
                       )}
                     </div>
@@ -129,7 +129,7 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
                     onClick={() => togglePrimary(contact.id)}
                     disabled={contact.is_primary}
                   >
-                    Marcar principal
+                    Mark as Primary
                   </Button>
                   <Button
                     variant="ghost"
@@ -145,20 +145,20 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
         </div>
       )}
 
-      {/* Formulario para agregar nuevo contacto */}
+      {/* Form to add new contact */}
       <Card className="p-4">
-        <h3 className="font-medium mb-4">Agregar nuevo contacto</h3>
+        <h3 className="font-medium mb-4">Add New Contact</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="contact_name">
-                Nombre <span className="text-destructive">*</span>
+                Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="contact_name"
                 value={newContact.name}
                 onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                placeholder="Juan Pérez"
+                placeholder="John Doe"
               />
               {errors.name && (
                 <p className="text-sm text-destructive">{errors.name}</p>
@@ -174,7 +174,7 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
                 type="email"
                 value={newContact.email}
                 onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
-                placeholder="juan@empresa.com"
+                placeholder="john@company.com"
               />
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email}</p>
@@ -184,24 +184,24 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="contact_phone">Teléfono</Label>
+              <Label htmlFor="contact_phone">Phone</Label>
               <Input
                 id="contact_phone"
                 value={newContact.phone}
                 onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                placeholder="+54 11 1234-5678"
+                placeholder="+1 555 1234-5678"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="contact_role">Rol/Cargo</Label>
+              <Label htmlFor="contact_role">Role/Position</Label>
               <Input
                 id="contact_role"
                 value={newContact.role_label}
                 onChange={(e) =>
                   setNewContact({ ...newContact, role_label: e.target.value })
                 }
-                placeholder="Ej: Dueño, Gerente, etc."
+                placeholder="e.g: Owner, Manager, etc."
               />
             </div>
           </div>
@@ -215,13 +215,13 @@ export const ContactsStep = ({ contacts, setContacts }: ContactsStepProps) => {
               }
             />
             <Label htmlFor="is_primary" className="text-sm font-normal cursor-pointer">
-              Marcar como contacto principal
+              Mark as primary contact
             </Label>
           </div>
 
           <Button type="button" onClick={addContact} className="w-full">
             <Plus className="h-4 w-4 mr-2" />
-            Agregar Contacto
+            Add Contact
           </Button>
         </div>
       </Card>

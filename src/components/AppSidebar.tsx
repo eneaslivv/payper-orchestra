@@ -25,8 +25,8 @@ import {
 const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
   { title: "Tenants", url: "/admin/tenants", icon: Building2 },
-  { title: "Usuarios", url: "/admin/users", icon: Users },
-  { title: "Auditoría", url: "/admin/audit", icon: FileText },
+  { title: "Users", url: "/admin/users", icon: Users },
+  { title: "Audit", url: "/admin/audit", icon: FileText },
 ];
 
 export function AppSidebar() {
@@ -43,9 +43,9 @@ export function AppSidebar() {
   const getRoleLabel = (role: string) => {
     switch (role) {
       case 'super_admin': return 'Super Admin';
-      case 'support_admin': return 'Soporte';
-      case 'sales_admin': return 'Ventas';
-      case 'read_only': return 'Lectura';
+      case 'support_admin': return 'Support';
+      case 'sales_admin': return 'Sales';
+      case 'read_only': return 'Read Only';
       default: return role;
     }
   };
@@ -96,7 +96,7 @@ export function AppSidebar() {
             <div className="px-4 py-3 space-y-3">
               {!collapsed && globalAdmin && (
                 <div>
-                  <p className="text-xs font-medium text-sidebar-foreground">Rol</p>
+                  <p className="text-xs font-medium text-sidebar-foreground">Role</p>
                   <p className="text-xs text-muted-foreground">
                     {getRoleLabel(globalAdmin.role)}
                   </p>
@@ -105,10 +105,10 @@ export function AppSidebar() {
               <button
                 onClick={signOut}
                 className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-sidebar-accent transition-colors"
-                title={collapsed ? "Cerrar sesión" : undefined}
+                title={collapsed ? "Sign Out" : undefined}
               >
                 <LogOut className="h-4 w-4" />
-                {!collapsed && <span>Cerrar sesión</span>}
+                {!collapsed && <span>Sign Out</span>}
               </button>
             </div>
           </SidebarMenuItem>

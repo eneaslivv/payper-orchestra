@@ -30,20 +30,20 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          toast.error(error.message || "Error al iniciar sesión");
+          toast.error(error.message || "Error signing in");
         } else {
-          toast.success("Sesión iniciada correctamente");
+          toast.success("Signed in successfully");
         }
       } else {
         const { error } = await signUp(email, password);
         if (error) {
-          toast.error(error.message || "Error al registrarse");
+          toast.error(error.message || "Error signing up");
         } else {
-          toast.success("Cuenta creada. Verifica tu email.");
+          toast.success("Account created. Please verify your email.");
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Error inesperado");
+      toast.error(error.message || "Unexpected error");
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ const Auth = () => {
           </div>
           <CardTitle className="text-2xl">Payper Superadmin</CardTitle>
           <CardDescription>
-            {isLogin ? "Inicia sesión con tu cuenta" : "Crea una nueva cuenta"}
+            {isLogin ? "Sign in to your account" : "Create a new account"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,7 +77,7 @@ const Auth = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -88,7 +88,7 @@ const Auth = () => {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Procesando..." : isLogin ? "Iniciar Sesión" : "Registrarse"}
+              {loading ? "Processing..." : isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
@@ -97,7 +97,7 @@ const Auth = () => {
               onClick={() => setIsLogin(!isLogin)}
               className="text-primary hover:underline"
             >
-              {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
+              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
           </div>
         </CardContent>

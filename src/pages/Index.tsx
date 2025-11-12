@@ -25,11 +25,11 @@ const Index = () => {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center space-y-6">
         <h1 className="text-4xl font-bold">Payper Superadmin</h1>
-        <p className="text-xl text-muted-foreground">Panel de administración global</p>
+        <p className="text-xl text-muted-foreground">Global Administration Panel</p>
         {user ? (
-          <Button onClick={signOut}>Cerrar Sesión</Button>
+          <Button onClick={signOut}>Sign Out</Button>
         ) : (
-          <Button onClick={() => navigate("/auth")}>Iniciar Sesión</Button>
+          <Button onClick={() => navigate("/auth")}>Sign In</Button>
         )}
       </div>
     </div>

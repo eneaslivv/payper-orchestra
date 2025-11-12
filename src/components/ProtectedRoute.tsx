@@ -9,7 +9,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Cargando...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -23,10 +23,10 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center max-w-md p-6">
-          <h1 className="text-2xl font-bold mb-2">Acceso Denegado</h1>
+          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
           <p className="text-muted-foreground mb-4">
-            Tu cuenta no tiene permisos de administrador global. 
-            Contacta al equipo de Payper para obtener acceso.
+            Your account does not have global administrator permissions. 
+            Contact the Payper team to request access.
           </p>
           <button
             onClick={async () => {
@@ -38,7 +38,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
             }}
             className="text-primary hover:underline"
           >
-            Volver a iniciar sesión
+            Sign in again
           </button>
         </div>
       </div>
