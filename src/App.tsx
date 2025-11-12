@@ -13,6 +13,16 @@ import TenantDetail from "./pages/admin/TenantDetail";
 import CreateTenant from "./pages/admin/CreateTenant";
 import Users from "./pages/admin/Users";
 import Audit from "./pages/admin/Audit";
+import Venues from "./pages/admin/Venues";
+import VenueDetail from "./pages/admin/VenueDetail";
+import Orders from "./pages/admin/Orders";
+import Stock from "./pages/admin/Stock";
+import Recipes from "./pages/admin/Recipes";
+import Bars from "./pages/admin/Bars";
+import VenueUsers from "./pages/admin/VenueUsers";
+import Staff from "./pages/admin/Staff";
+import Cashflow from "./pages/admin/Cashflow";
+import Alerts from "./pages/admin/Alerts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +49,16 @@ const App = () => (
               <Route path="tenants/:id" element={<TenantDetail />} />
               <Route path="users" element={<Users />} />
               <Route path="audit" element={<Audit />} />
+              <Route path="venues" element={<Venues />} />
+              <Route path="venues/:id" element={<VenueDetail />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="stock" element={<Stock />} />
+              <Route path="recipes" element={<Recipes />} />
+              <Route path="bars" element={<Bars />} />
+              <Route path="venue-users" element={<VenueUsers />} />
+              <Route path="staff" element={<Staff />} />
+              <Route path="cashflow" element={<Cashflow />} />
+              <Route path="alerts" element={<Alerts />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
 

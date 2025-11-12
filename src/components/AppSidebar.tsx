@@ -29,6 +29,18 @@ const menuItems = [
   { title: "Audit", url: "/admin/audit", icon: FileText },
 ];
 
+const venueMenuItems = [
+  { title: "Venues", url: "/admin/venues", icon: Building2 },
+  { title: "Orders", url: "/admin/orders", icon: FileText },
+  { title: "Stock", url: "/admin/stock", icon: LayoutDashboard },
+  { title: "Recipes", url: "/admin/recipes", icon: FileText },
+  { title: "Bars & QR", url: "/admin/bars", icon: LayoutDashboard },
+  { title: "Venue Users", url: "/admin/venue-users", icon: Users },
+  { title: "Staff", url: "/admin/staff", icon: Shield },
+  { title: "Cashflow", url: "/admin/cashflow", icon: FileText },
+  { title: "Alerts", url: "/admin/alerts", icon: FileText },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
@@ -69,6 +81,33 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                      <NavLink 
+                        to={item.url} 
+                        className="hover:bg-sidebar-accent"
+                        activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      >
+                        <Icon className="h-4 w-4" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-4">
+            {!collapsed && "Venue Management"}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {venueMenuItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <SidebarMenuItem key={item.title}>

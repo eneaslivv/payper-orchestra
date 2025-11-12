@@ -107,6 +107,242 @@ export type Database = {
         }
         Relationships: []
       }
+      qr_codes: {
+        Row: {
+          bar_id: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          qr_code: string
+          restrictions: Json | null
+          table_number: string
+        }
+        Insert: {
+          bar_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          qr_code: string
+          restrictions?: Json | null
+          table_number: string
+        }
+        Update: {
+          bar_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          qr_code?: string
+          restrictions?: Json | null
+          table_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qr_codes_bar_id_fkey"
+            columns: ["bar_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_items: {
+        Row: {
+          created_at: string
+          id: string
+          ingredient_id: string
+          ingredient_name: string
+          percentage: number
+          recipe_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingredient_id: string
+          ingredient_name: string
+          percentage?: number
+          recipe_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingredient_id?: string
+          ingredient_name?: string
+          percentage?: number
+          recipe_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      staff: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          last_action_at: string | null
+          name: string
+          permissions: Json | null
+          role: string
+          updated_at: string | null
+          venue_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          last_action_at?: string | null
+          name: string
+          permissions?: Json | null
+          role: string
+          updated_at?: string | null
+          venue_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          last_action_at?: string | null
+          name?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_items: {
+        Row: {
+          bar_id: string
+          id: string
+          min_quantity: number
+          product_id: string | null
+          product_name: string
+          quantity: number
+          unit: string
+          updated_at: string | null
+        }
+        Insert: {
+          bar_id: string
+          id?: string
+          min_quantity?: number
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          unit?: string
+          updated_at?: string | null
+        }
+        Update: {
+          bar_id?: string
+          id?: string
+          min_quantity?: number
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          unit?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_items_bar_id_fkey"
+            columns: ["bar_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      system_alerts: {
+        Row: {
+          bar_id: string | null
+          created_at: string
+          id: string
+          is_resolved: boolean | null
+          message: string
+          resolved_at: string | null
+          severity: string
+          type: string
+          venue_id: string | null
+        }
+        Insert: {
+          bar_id?: string | null
+          created_at?: string
+          id?: string
+          is_resolved?: boolean | null
+          message: string
+          resolved_at?: string | null
+          severity?: string
+          type: string
+          venue_id?: string | null
+        }
+        Update: {
+          bar_id?: string | null
+          created_at?: string
+          id?: string
+          is_resolved?: boolean | null
+          message?: string
+          resolved_at?: string | null
+          severity?: string
+          type?: string
+          venue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_alerts_bar_id_fkey"
+            columns: ["bar_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_contacts: {
         Row: {
           created_at: string
@@ -325,6 +561,227 @@ export type Database = {
           slug?: string
           status?: Database["public"]["Enums"]["tenant_status"]
           timezone?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      venue_bars: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          updated_at: string | null
+          venue_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string | null
+          venue_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string | null
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_bars_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venue_cashflow: {
+        Row: {
+          amount: number
+          bar_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          type: string
+          venue_id: string
+        }
+        Insert: {
+          amount: number
+          bar_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          type: string
+          venue_id: string
+        }
+        Update: {
+          amount?: number
+          bar_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          type?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_cashflow_bar_id_fkey"
+            columns: ["bar_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_cashflow_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venue_orders: {
+        Row: {
+          bar_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          items: Json | null
+          prep_time_minutes: number | null
+          status: string
+          total_amount: number
+          updated_at: string | null
+          user_id: string | null
+          venue_id: string
+        }
+        Insert: {
+          bar_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          items?: Json | null
+          prep_time_minutes?: number | null
+          status?: string
+          total_amount?: number
+          updated_at?: string | null
+          user_id?: string | null
+          venue_id: string
+        }
+        Update: {
+          bar_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          items?: Json | null
+          prep_time_minutes?: number | null
+          status?: string
+          total_amount?: number
+          updated_at?: string | null
+          user_id?: string | null
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_orders_bar_id_fkey"
+            columns: ["bar_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "venue_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_orders_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venue_users: {
+        Row: {
+          balance: number
+          created_at: string
+          email: string | null
+          has_nfc: boolean | null
+          id: string
+          name: string
+          nfc_card_id: string | null
+          updated_at: string | null
+          venue_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          email?: string | null
+          has_nfc?: boolean | null
+          id?: string
+          name: string
+          nfc_card_id?: string | null
+          updated_at?: string | null
+          venue_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          email?: string | null
+          has_nfc?: boolean | null
+          id?: string
+          name?: string
+          nfc_card_id?: string | null
+          updated_at?: string | null
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_users_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venues: {
+        Row: {
+          created_at: string
+          id: string
+          is_offline: boolean | null
+          last_sync: string | null
+          name: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_offline?: boolean | null
+          last_sync?: string | null
+          name: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_offline?: boolean | null
+          last_sync?: string | null
+          name?: string
+          status?: string
           updated_at?: string | null
         }
         Relationships: []
