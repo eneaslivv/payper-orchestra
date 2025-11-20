@@ -90,13 +90,19 @@ const Tenants = () => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Comercios</h1>
-          <p className="text-muted-foreground">Gestiona todos los clientes de Payper</p>
+          <h1 className="text-3xl font-bold tracking-tight">Tenants</h1>
+          <p className="text-muted-foreground">Manage all Payper clients</p>
         </div>
-        <Button onClick={() => navigate("/admin/tenants/new")} className="w-full sm:w-auto">
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo Comercio
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate("/admin/tenants/quick-new")} className="w-full sm:w-auto">
+            <Plus className="h-4 w-4 mr-2" />
+            Quick Create
+          </Button>
+          <Button onClick={() => navigate("/admin/tenants/new")} className="w-full sm:w-auto">
+            <Plus className="h-4 w-4 mr-2" />
+            New Tenant
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">

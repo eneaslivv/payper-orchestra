@@ -9,6 +9,7 @@ import {
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { TenantSelector } from "@/components/TenantSelector";
 import {
   Sidebar,
   SidebarContent,
@@ -65,6 +66,8 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
+        {!collapsed && <TenantSelector />}
+        
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 py-4">
             {!collapsed && (

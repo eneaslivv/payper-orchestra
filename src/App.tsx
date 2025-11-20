@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { TenantProvider } from "@/contexts/TenantContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Auth from "./pages/Auth";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -11,6 +12,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Tenants from "./pages/admin/Tenants";
 import TenantDetail from "./pages/admin/TenantDetail";
 import CreateTenant from "./pages/admin/CreateTenant";
+import CreateTenantQuick from "./pages/admin/CreateTenantQuick";
 import Users from "./pages/admin/Users";
 import Audit from "./pages/admin/Audit";
 import Venues from "./pages/admin/Venues";
@@ -32,7 +34,8 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
+          <TenantProvider>
+            <Routes>
             <Route path="/auth" element={<Auth />} />
 
             <Route
@@ -46,6 +49,7 @@ const App = () => (
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="tenants" element={<Tenants />} />
               <Route path="tenants/new" element={<CreateTenant />} />
+              <Route path="tenants/quick-new" element={<CreateTenantQuick />} />
               <Route path="tenants/:id" element={<TenantDetail />} />
               <Route path="users" element={<Users />} />
               <Route path="audit" element={<Audit />} />
@@ -65,9 +69,9 @@ const App = () => (
             <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-
           <Toaster />
           <Sonner />
+          </TenantProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

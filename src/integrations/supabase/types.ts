@@ -764,6 +764,7 @@ export type Database = {
           last_sync: string | null
           name: string
           status: string
+          tenant_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -773,6 +774,7 @@ export type Database = {
           last_sync?: string | null
           name: string
           status?: string
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -782,16 +784,41 @@ export type Database = {
           last_sync?: string | null
           name?: string
           status?: string
+          tenant_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "venues_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      can_access_tenant: {
+        Args: { _tenant_id: string; _user_id?: string }
+        Returns: boolean
+      }
+      create_tenant_with_defaults: {
+        Args: {
+          p_currency?: string
+          p_legal_name?: string
+          p_name: string
+          p_owner_user_id?: string
+          p_slug: string
+          p_timezone?: string
+        }
+        Returns: Json
+      }
       current_global_role: { Args: never; Returns: string }
+      get_user_tenant_ids: { Args: { _user_id?: string }; Returns: string[] }
       insert_audit_log: {
         Args: {
           p_action: string
@@ -805,6 +832,10 @@ export type Database = {
       is_global_admin: { Args: never; Returns: boolean }
       is_member_of_tenant: { Args: { _tenant_id: string }; Returns: boolean }
       is_tenant_admin: { Args: { _tenant_id: string }; Returns: boolean }
+      is_tenant_owner: {
+        Args: { _tenant_id: string; _user_id?: string }
+        Returns: boolean
+      }
       user_tenant_ids: { Args: never; Returns: string[] }
     }
     Enums: {
