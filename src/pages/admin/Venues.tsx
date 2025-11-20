@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useTenant } from "@/contexts/TenantContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,17 +23,25 @@ const Venues = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currentTenant } = useTenant();
+  const { globalAdmin } = useAuth();
 
   useEffect(() => {
-    fetchVenues();
-  }, []);
+    if (currentTenant || globalAdmin) {
+      fetchVenues();
+    }
+  }, [currentTenant, globalAdmin]);
 
   const fetchVenues = async () => {
     try {
-      const { data, error } = await supabase
-        .from("venues")
-        .select("*")
-        .order("created_at", { ascending: false });
+      let query = supabase.from("venues").select("*");
+      
+      // Filter by tenant if not global admin
+      if (!globalAdmin && currentTenant) {
+        query = query.eq("tenant_id", currentTenant.id);
+      }
+      
+      const { data, error } = await query.order("created_at", { ascending: false });
 
       if (error) throw error;
       setVenues(data || []);
