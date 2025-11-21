@@ -23,6 +23,7 @@ export type DatabaseTableStatus =
   | "preparing"
   | "delivered"
   | "bill_requested"
+  | "waiter_called"
   | "producing"
   | "paid";
 
