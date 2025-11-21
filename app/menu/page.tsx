@@ -239,7 +239,7 @@ export default function Home() {
 
         {/* Menu Categories */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">Descubrí más</h2>
+          <h2 className="text-2xl font-bold mb-4">Order List</h2>
           <Tabs defaultValue="all" onValueChange={setActiveCategory}>
             <TabsList className="w-full justify-start">
               {categories.map((category) => (
